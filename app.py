@@ -1,17 +1,109 @@
 import streamlit as st
-
-
+import altair as alt
+import plotly.express as px
+import numpy as np
+import pandas as pd
+import requests
+import json
+import html
 
 
 def main() :
+    
+    st.set_page_config(layout="wide")
+    
     st.title('Streamlit jeju tour app')
     
     menu = ['관광지', '여행추천코스', '숙박', '음식점']
-    st. selectbox('메뉴 선택', menu)
+    choice1 = st. selectbox('메뉴 선택', menu)
     
-    
+    if choice1 == menu[0] :
+        
+        jt = pd.read_csv('data/df1.csv', index_col=0)
+                
+        tour_serch = st.text_input('관광지 검색')
+        result1 = jt.loc[ jt['명칭'] .str.contains(tour_serch) ]
+                
+        c1, c2 = st.columns(2)
+               
+        with c1 :
+            c1.header('위치')
+            st.map(result1)
+
+        with c2 :
+            c2.header("내용")
+            column_list = result1.columns
+            column_list = st.multiselect('컬럼을 선택해 원하시는 정보를 찾아보세요', column_list)
+            if len(column_list) != 0 :
+                st.dataframe(result1[column_list])
+            
+            st.info('마우스를 가져가면 가려진 내용전체가 보입니다.')
+        
+        st.title('')
+        st.subheader('제주도 관광지 전체 보기')
+        st.dataframe(jt[['명칭','주소','개요','문의 및 안내','쉬는날','이용시간','주차시설','유모차 대여 여부','애완동물 동반 가능 여부']])
+        
+
+    if choice1 == menu[1] :
+        st.subheader('여행 추천코스')
+        jtc = pd.read_csv('data/jeju_tour_course.csv', index_col=0)
+        st.dataframe(jtc)
 
 
+    if choice1 == menu[2] :
+        st.subheader('숙박업소')
+        jh = pd.read_csv('data/jeju_hotel.csv', index_col=0)
+        
+
+        hotel_serch = st.text_input('관광지 검색')
+        result2 = jh.loc[ jh['명칭'] .str.contains(hotel_serch) ]
+                
+        c3, c4 = st.columns(2)
+               
+        with c3 :
+            c3.header('위치')
+            st.map(result2)
+
+        with c4 :
+            c4.header("내용")
+            column_list3 = result2.columns
+            column_list3 = st.multiselect('컬럼을 선택해 원하시는 정보를 찾아보세요', column_list3)
+            if len(column_list3) != 0 :
+                st.dataframe(result2[column_list3])
+            
+            st.info('마우스를 가져가면 가려진 내용전체가 보입니다.')
+        st.title('')
+        st.subheader('제주도 숙박업소 전체 보기')
+        st.dataframe(jh)
+
+
+
+
+    if choice1 == menu[3] :
+        st.subheader('음식점')
+        jr = pd.read_csv('data/jeju_rest.csv', index_col=0)
+         
+
+        rest_serch = st.text_input('음식점 검색')
+        result3 = jr.loc[ jr['명칭'] .str.contains(rest_serch) ]
+                
+        c5, c6 = st.columns(2)
+               
+        with c5 :
+            c5.header('위치')
+            st.map(result3)
+
+        with c6 :
+            c6.header("내용")
+            column_list4 = result3.columns
+            column_list4 = st.multiselect('컬럼을 선택해 원하시는 정보를 찾아보세요', column_list4)
+            if len(column_list4) != 0 :
+                st.dataframe(result3[column_list4])
+            
+            st.info('마우스를 가져가면 가려진 내용전체가 보입니다.')
+        st.title('')
+        st.subheader('제주도 음식점 전체 보기')
+        st.dataframe(jr)
 
 
 
