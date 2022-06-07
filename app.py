@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 import requests
 import json
-import html
 
 
 def main() :
@@ -22,7 +21,42 @@ def main() :
         jt = pd.read_csv('data/df1.csv', index_col=0)
                 
         tour_serch = st.text_input('관광지 검색')
-        result1 = jt.loc[ jt['명칭'] .str.contains(tour_serch) ]
+        result = jt.loc[ jt['명칭'] .str.contains(tour_serch) ]
+                
+        c1, c2 = st.columns(2)
+               
+        with c1 :
+            c1.header('위치')
+            st.map(result)
+
+        with c2 :
+            c2.header("내용")
+            column_list = result.columns
+            column_list = st.multiselect('컬럼을 선택해 원하시는 정보를 찾아보세요', column_list)
+            if len(column_list) != 0 :
+                st.dataframe(result[column_list])
+            
+            st.info('마우스를 가져가면 가려진 내용전체가 보입니다.')
+        
+        st.title('')
+        st.header('제주도 관광지 지역별 보기')
+        jt2 = jt[['명칭','주소','개요','문의 및 안내','쉬는날','이용시간','주차시설','유모차 대여 여부','애완동물 동반 가능 여부']]
+        
+        menu2 = ['제주시','서귀포시']
+        choice2 = st.selectbox('지역 선택', menu2)
+        if choice2 ==menu2[0] :
+            st.dataframe(jt2.loc[jt2['주소'].str.contains('제주시')])
+        else :
+            st.dataframe(jt2.loc[jt2['주소'].str.contains('서귀포시')])
+    
+    if choice1 == menu[1] :
+        st.subheader('여행 추천코스')
+        jtc = pd.read_csv('data/jeju_tour_course.csv', index_col= 0)
+        
+        st.dataframe(jtc)
+
+        tour_course_serch = st.text_input('코스 검색')
+        result1 = jtc.loc[ jtc['명칭'] .str.contains(tour_course_serch) ]
                 
         c1, c2 = st.columns(2)
                
@@ -38,16 +72,12 @@ def main() :
                 st.dataframe(result1[column_list])
             
             st.info('마우스를 가져가면 가려진 내용전체가 보입니다.')
-        
-        st.title('')
-        st.subheader('제주도 관광지 전체 보기')
-        st.dataframe(jt[['명칭','주소','개요','문의 및 안내','쉬는날','이용시간','주차시설','유모차 대여 여부','애완동물 동반 가능 여부']])
-        
 
-    if choice1 == menu[1] :
-        st.subheader('여행 추천코스')
-        jtc = pd.read_csv('data/jeju_tour_course.csv', index_col=0)
-        st.dataframe(jtc)
+
+
+
+
+
 
 
     if choice1 == menu[2] :
@@ -73,10 +103,16 @@ def main() :
             
             st.info('마우스를 가져가면 가려진 내용전체가 보입니다.')
         st.title('')
-        st.subheader('제주도 숙박업소 전체 보기')
-        st.dataframe(jh)
+        st.subheader('제주도 숙박업소 지역별 보기')
+        
+        jh2 = jh[['명칭','주소','개요','주차 가능','조리 가능','체크인','체크아웃','예약 안내']]
 
-
+        menu3 = ['제주시','서귀포시']
+        choice3 = st.selectbox('지역 선택', menu3)
+        if choice3 ==menu3[0] :
+            st.dataframe(jh2.loc[jh2['주소'].str.contains('제주시')])
+        else :
+            st.dataframe(jh2.loc[jh2['주소'].str.contains('서귀포시')])
 
 
     if choice1 == menu[3] :
@@ -102,9 +138,17 @@ def main() :
             
             st.info('마우스를 가져가면 가려진 내용전체가 보입니다.')
         st.title('')
-        st.subheader('제주도 음식점 전체 보기')
-        st.dataframe(jr)
+        st.subheader('제주도 음식점 지역별 보기')
+        
 
+        jr2 = jr[['명칭','주소','개요','문의 및 안내','영업시간','대표메뉴','취급메뉴','상세정보']]
+
+        menu3 = ['제주시','서귀포시']
+        choice3 = st.selectbox('지역 선택', menu3)
+        if choice3 ==menu3[0] :
+            st.dataframe(jr2.loc[jr2['주소'].str.contains('제주시')])
+        else :
+            st.dataframe(jr2.loc[jr2['주소'].str.contains('서귀포시')])
 
 
 if __name__ == '__main__' :
