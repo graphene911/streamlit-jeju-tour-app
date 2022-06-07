@@ -63,7 +63,7 @@ def main() :
             popup=result.iloc[i][['명칭','문의 및 안내']],
             icon=folium.Icon(color='blue')).add_to(map_paikdabang1)
 
-        # folium_static(map_paikdabang1)
+        folium_static(map_paikdabang1)
         
 
 
