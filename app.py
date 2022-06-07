@@ -5,8 +5,8 @@ import numpy as np
 import pandas as pd
 import requests
 import json
+from streamlit_folium import folium_static
 import folium
-
 def main() :
     
     st.set_page_config(layout="wide")
@@ -49,6 +49,25 @@ def main() :
         else :
             st.dataframe(jt2.loc[jt2['주소'].str.contains('서귀포시')])
     
+
+        data3_size = len(result)
+
+        # 지도 정의
+        map_paikdabang1 = folium.Map(location=result, zoom_start=12)
+
+        # 포인트 마커 추가
+
+        for i in range(data3_size):
+
+            folium.Marker(list(result.iloc[i][['lat', 'lon']]),
+            popup=result.iloc[i][['명칭','문의 및 안내']],
+            icon=folium.Icon(color='blue')).add_to(map_paikdabang1)
+
+        folium_static(map_paikdabang1)
+
+
+
+
     if choice1 == menu[1] :
         st.subheader('여행 추천코스')
         jtc = pd.read_csv('data/jeju_tour_course.csv', index_col= 0)
