@@ -50,22 +50,26 @@ def main() :
             st.dataframe(jt2.loc[jt2['주소'].str.contains('서귀포시')])
     
 
-        data3_size = len(result)
+        if result == None :
+            
+            map_jeju2 = folium.Map(location=['33.3445','126.5364'], zoom_start=10)
+            folium_static(map_jeju2)
 
-        # 지도 정의
-        map_paikdabang1 = folium.Map(location=result, zoom_start=12)
-
-        # 포인트 마커 추가
-
-        for i in range(data3_size):
-
-            folium.Marker(list(result.iloc[i][['lat', 'lon']]),
-            popup=result.iloc[i][['명칭','문의 및 안내']],
-            icon=folium.Icon(color='blue')).add_to(map_paikdabang1)
-
-        folium_static(map_paikdabang1)
+        else :    
+            loc = result[['lat','lon']] # 위도(N), 경도(E)
+            # 지도 정의
+            map_jeju = folium.Map(loc, zoom_start=14)
         
+            # 포인트 마커 추가
 
+            for i in range(len(result)):
+                folium.Marker(list(result.iloc[i][['lat', 'lon']]),
+                popup=result.iloc[i][['명칭','문의 및 안내']],
+                icon=folium.Icon(color='blue')).add_to(map_jeju)
+
+            folium_static(map_jeju)
+        
+        
 
 
     if choice1 == menu[1] :
