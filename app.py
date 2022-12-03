@@ -7,14 +7,48 @@ import requests
 import json
 from streamlit_folium import folium_static
 import folium
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+import time
+import re
+
+login_x_path = //*[@id="kt_sign_in_submit"]
+
+chrome_options = Options()
+chrome_options.add_argument('--headless')
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+driver = webdriver.Chrome('/home/bdh/chromedriver', chrome_options=chrome_options)
+
+def remove_html_tags(data) :
+    p = re.compile(r'<.*?>')
+    return p.sub(' ', str(data))
+
+def get_crawl(URL) :
+    response = driver.get(URL)
+    html = driver.page_source
+    soup7 = BeautifulSoup(html, 'html.parser')
+    ex_id_divs = soup7.find('div', {'id' : 'view_content'})
+    crawl_data = remove_html_tags(ex_id_divs)
+    return crawl_data
+
+driver.implicitly_wait(3)
+driver.get('https://monitor.aimbelab.com/WEBSITE/login')
+driver.find_element_by_name('user_id').send_keys('<sjf22>')
+driver.find_element_by_name('user_pwd').send_keys('<1234>')
+driver.find_element_by_xpath(login_x_path).click()
+
+
 def main() :
     
     st.set_page_config(layout="wide")
     
-    st.title('Streamlit jeju tour app')
+    st.title('Aimbelab Report Data')
     
-    menu = ['관광지', '여행추천코스', '숙박', '음식점']
-    choice1 = st. selectbox('메뉴 선택', menu)
+    menu = ['선진사료']
+    choice1 = st. selectbox('회사 선택', menu)
+    
     
     if choice1 == menu[0] :
         
