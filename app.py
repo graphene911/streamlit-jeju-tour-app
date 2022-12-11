@@ -30,12 +30,12 @@ def main() :
 
     # # data = st.json(response)
 
-    df = pd.DataFrame(response)
+    df = pd.DataFrame.from_dict(response)
 
     df_a = df['company']['agency']
 
     df_a = pd.DataFrame(df_a)
-
+    # st.dataframe(df)
     df = df.T
 
     df_am = pd.merge(df, df_a, left_on = 'seq', right_on = 'company_seq', how = 'left')
@@ -72,7 +72,7 @@ def main() :
     df = df
 
     st.dataframe(df)
-
+    
     # menu = ['선진사료']
     # choice1 = st. selectbox('회사 선택', menu)
     
