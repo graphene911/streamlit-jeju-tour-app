@@ -13,7 +13,9 @@ from selenium.webdriver.chrome.options import Options
 import time
 import re
 import json
-
+import altair as alt
+import plotly.express as px
+import matplotlib.pyplot as plt
 
 def main() :
     
@@ -39,31 +41,51 @@ def main() :
     df = df.T
 
     df_am = pd.merge(df, df_a, left_on = 'seq', right_on = 'company_seq', how = 'left')
-
     df_ams = df_am[['company_name_x', 'company_name_y', 'company_seq_y', 'farm','seq_y']]
-
     df_farm = pd.DataFrame(df_a.loc[0,'farm'])
-
     for i in range(1, len(df_a.index)) :
         if df_a.loc[i,'farm'] != [] :
             df_farm_temp = pd.DataFrame(df_a.loc[i,'farm'])
             df_farm = pd.concat([df_farm, df_farm_temp])
 
     df_farm = df_farm.reset_index(drop=True)
-
-    df_farm = df_farm.rename(columns={'seq':'farm_id_x'})
-
+    df_farm = df_farm.rename(columns={'seq':'farm_id_x','company_name':'f_company_name'})
     df_farm_x = pd.merge(df_ams, df_farm, left_on = 'seq_y', right_on = 'agency_seq', how = 'left')
-
     df_silo = pd.DataFrame(df_farm.loc[0,'silo'])
 
     for i in range(1, len(df_farm.index)) :
         df_silo_temp = pd.DataFrame(df_farm.loc[i,'silo'])
         df_silo = pd.concat([df_silo, df_silo_temp])
 
+    # df_silo = df_silo.reset_index(drop=True)
+    df_silo = df_silo.reset_index(drop=True)
     df_silo['farm_id'] = df_silo['farm_id'].astype('int64')
+    df_silo = df_silo.rename(columns={'silodata':'silo_data', 'seq' : 'silo_seq'})
+    df_sd = df_silo['silo_data']
+    df_sd_d = df_sd.to_list()
+    df_sd_d = pd.DataFrame(df_sd_d)
+    # df = pd.merge(df_silo, df_sd_d, left_on = 'silo_type', right_on = 'siloType', how = 'left')
+    df_s = pd.concat([df_silo, df_sd_d], axis = 1)
+    df = pd.merge(df_farm_x,df_s, left_on = 'farm_id_x', right_on = 'farm_id', how = 'left')
+    df = df.drop(['company_name_x','farm', 'gender', 'user_email', 'auth', 'date_of_birth','is_activate', 'user_password',
+                'logo', 'lat', 'animal_type', 'lon', 'api_key', 'status','animal_cnt','user_id', 'address', 'coordinate',
+                'phone', 'token','cdt','silo','silo_type','silo_height','silo_diameter','memo','food_category','silo_capacity',
+                'silo_middle_height','silo_middle_diameter','silo_seq', 'silo_sn', 'binstatus', 'silo_data', 'siloType',
+                'h1','h3','display','seq','d','h2','h4','company_seq_y','seq_y','agency_seq','farm_id_x','company_seq',
+                'farm_id','last_name', 'first_name'], axis= 1)
+    # df = df.fillna("-")
+    # df = df.replace("<NA>", "-")
+    df['규격'] = df['companyName'] + " " + df['size'] + "t"
+    df['per'] = round(df['per'])
+    # df['잔량(예상소진일)'] = str(df['per']) + "%" + "(" + df['expect_day'] + ")"
+    df = df[['company_name_y', 'f_company_name', 'silo_name', '규격', 'food_name', 'per', 'expect_day', 'avg_per']]
+    # df = df.groupby(['company_name_y','f_company_name'],  as_index=False)
+    # 'per' : '잔량', 'expect_day' : '예상소진일',
+    df = df.rename(columns={'company_name_y':'대리점', 'f_company_name' : '농장명','avg_per' : '평균잔량', 'food_name' : '사료명칭',
+                            'per' : '잔량', 'expect_day' : '예상소진일','silo_name' : '사일로명'})
 
-    df = pd.merge(df_farm_x,df_silo, left_on = 'farm_id_x', right_on = 'farm_id', how = 'left')
+    # df['잔량(예상소진일)'] = df['잔량'] + "%" + df['예상소진일']
+
 
     df.to_csv('data/aimbelab_df.csv', encoding='utf-8-sig')
     
@@ -71,17 +93,73 @@ def main() :
 
     df = df
 
-    st.dataframe(df)
+    # st.dataframe(df)
+    st.subheader('')
+    st.subheader('대리점별 30% 이하 사일로')
+    menu = ['여주축우대리점','상주대리점', '영주북부대리점', '예산대리점', '영동대리점']
+    choice1 = st. selectbox('', menu)
     
-    # menu = ['선진사료']
-    # choice1 = st. selectbox('회사 선택', menu)
+    if choice1 == menu[0] :
+        df = pd.read_csv('data/aimbelab_df.csv',encoding='utf-8-sig', index_col=0)
+        df = df[df['대리점'] == '여주축우대리점']
+        # df = df.drop('대리점')
+        df_s = df[df['잔량'] <= 30]
+        df_u = df[df['잔량'] > 30]
+        df_pc = [len(df_s.index), len(df_u.index)]
+        df_p = len(df_s.index)/len(df.index) * 100
+        st.dataframe(df_s, width=1069, height=808)
+        fig1 = px.pie(df_pc)
+        st.plotly_chart(fig1)
+        print(df_p)
+
+    elif choice1 == menu[1] :
+        df = pd.read_csv('data/aimbelab_df.csv',encoding='utf-8-sig', index_col=0)
+        df = df[df['대리점'] == '상주대리점']
+        df_s = df[df['잔량'] <= 30]
+        df_u = df[df['잔량'] > 30]
+        df_pc = [len(df_s.index), len(df_u.index)]
+        df_p = len(df_s.index)/len(df.index) * 100
+        st.dataframe(df_s, width=1069, height=808)
+        fig1 = px.pie(df_pc)
+        st.plotly_chart(fig1)
     
-    # if choice1 == menu[0] :
-        
+    elif choice1 == menu[2] :
+        df = pd.read_csv('data/aimbelab_df.csv',encoding='utf-8-sig', index_col=0)
+        df = df[df['대리점'] == '영주북부대리점']
+        df_s = df[df['잔량'] <= 30]
+        df_u = df[df['잔량'] > 30]
+        df_pc = [len(df_s.index), len(df_u.index)]
+        df_p = len(df_s.index)/len(df.index) * 100
+        st.dataframe(df_s, width=1050, height=808)
+        fig1 = px.pie(df_pc)
+        st.plotly_chart(fig1)
+    
+    elif choice1 == menu[3] :
+        df = pd.read_csv('data/aimbelab_df.csv',encoding='utf-8-sig', index_col=0)
+        df = df[df['대리점'] == '예산대리점']
+        df_s = df[df['잔량'] <= 30]
+        df_u = df[df['잔량'] > 30]
+        df_pc = [len(df_s.index), len(df_u.index)]
+        df_p = len(df_s.index)/len(df.index) * 100
+        st.dataframe(df_s, width=950, height=808)
+        fig1 = px.pie(df_pc)
+        st.plotly_chart(fig1)
+    
+    elif choice1 == menu[4] :
+        df = pd.read_csv('data/aimbelab_df.csv',encoding='utf-8-sig', index_col=0)
+        df = df[df['대리점'] == '영동대리점']
+        df_s = df[df['잔량'] <= 30]
+        df_u = df[df['잔량'] > 30]
+        df_pc = [len(df_s.index), len(df_u.index)]
+        df_p = len(df_s.index)/len(df.index) * 100
+        st.dataframe(df_s, width=1000, height=808)
+        fig1 = px.pie(df_pc)
+        st.plotly_chart(fig1)
+
     #     # jt = pd.read_csv('data/df1.csv', index_col=0)
                 
-    #     # tour_serch = st.text_input('관광지 검색')
-    #     # result = jt.loc[ jt['명칭'] .str.contains(tour_serch) ]
+        # tour_serch = st.text_input('관광지 검색')
+        # result = jt.loc[ jt['명칭'] .str.contains(tour_serch) ]
                 
     #     # c1, c2 = st.columns(2)
                
