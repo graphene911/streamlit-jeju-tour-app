@@ -16,13 +16,18 @@ import json
 import altair as alt
 import plotly.express as px
 import matplotlib.pyplot as plt
+import math
 
 def main() :
     
     st.set_page_config(layout="wide")
     
-    st.title('Aimbelab Report Data')
-    st.subheader('선진사료')
+    # with open( "data/style.css" ) as css:
+    #     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
+    
+    
+    st.title('선진사료 모니터링 보고서')
+    
 
     url = 'http://topping.io:8000/API/silos/user/dashboard?user_seq=30'
 
@@ -73,10 +78,23 @@ def main() :
                 'silo_middle_height','silo_middle_diameter','silo_seq', 'silo_sn', 'binstatus', 'silo_data', 'siloType',
                 'h1','h3','display','seq','d','h2','h4','company_seq_y','seq_y','agency_seq','farm_id_x','company_seq',
                 'farm_id','last_name', 'first_name'], axis= 1)
-    # df = df.fillna("-")
-    # df = df.replace("<NA>", "-")
+
+    df = df.replace("", np.NaN)
+    # df = df.fillna('-')
     df['규격'] = df['companyName'] + " " + df['size'] + "t"
+    df = df.fillna(999)
+    df = df.astype({'expect_day' :'int'})
+    df['expect_day'] = df['expect_day'].replace(999, '판단불가')
+    # if df['expect_day'] != '판단불가' :
+    #     df['expect_day'] = df['expect_day'] + '일'
     df['per'] = round(df['per'])
+    df['avg_per'] = round(df['avg_per'])
+    
+    # if df['expect_day'] == None :
+    #     df['expect_day'] = '판단불가'
+    # else :
+    #     df['expect_day'] = round(df['expect_day'])
+    
     # df['잔량(예상소진일)'] = str(df['per']) + "%" + "(" + df['expect_day'] + ")"
     df = df[['company_name_y', 'f_company_name', 'silo_name', '규격', 'food_name', 'per', 'expect_day', 'avg_per']]
     # df = df.groupby(['company_name_y','f_company_name'],  as_index=False)
@@ -84,42 +102,53 @@ def main() :
     df = df.rename(columns={'company_name_y':'대리점', 'f_company_name' : '농장명','avg_per' : '평균잔량', 'food_name' : '사료명칭',
                             'per' : '잔량', 'expect_day' : '예상소진일','silo_name' : '사일로명'})
 
-    # df['잔량(예상소진일)'] = df['잔량'] + "%" + df['예상소진일']
+    # df['잔량(예상소진일)'] = df['잔량'] + '' + "%" + '' + df['예상소진일']
 
 
     df.to_csv('data/aimbelab_df.csv', encoding='utf-8-sig')
     
     df = pd.read_csv('data/aimbelab_df.csv',encoding='utf-8-sig', index_col=0)
 
-    df = df
-
+    # df = df.style.format({ 'A': '{:,.2f}'.format, 'B': '{:,.2%}'.format,})
+    # df_t = df[df['예상소진일'] != '판단불가']
+    
     # st.dataframe(df)
+    st.info('실시간 사료 소비량 모니터링과 AI 분석을 통해사료 소진일을 예측합니다.')
     st.subheader('')
-    st.subheader('대리점별 30% 이하 사일로')
     menu = ['여주축우대리점','상주대리점', '영주북부대리점', '예산대리점', '영동대리점']
-    choice1 = st. selectbox('', menu)
+    choice1 = st. selectbox('대리점 선택', menu)
+    
+    st.image('data/#fc6858_line.png', width = 1753)
+    st.subheader('사료소진 임박 농장 리스트')
+    
+    
     
     if choice1 == menu[0] :
         df = pd.read_csv('data/aimbelab_df.csv',encoding='utf-8-sig', index_col=0)
-        df = df[df['대리점'] == '여주축우대리점']
-        # df = df.drop('대리점')
-        df_s = df[df['잔량'] <= 30]
+        df_s = df[df['대리점'] == '여주축우대리점']
+        df_s = df_s[df_s['잔량'] <= 30]
+        # df_s = df_s[ df_s['예상소진일'] != "판단불가"]
         df_u = df[df['잔량'] > 30]
         df_pc = [len(df_s.index), len(df_u.index)]
         df_p = len(df_s.index)/len(df.index) * 100
-        st.dataframe(df_s, width=1069, height=808)
+        
+        st._legacy_table(df_s)
+        # , width=1069, height=808
+        
         fig1 = px.pie(df_pc)
         st.plotly_chart(fig1)
-        print(df_p)
+
 
     elif choice1 == menu[1] :
         df = pd.read_csv('data/aimbelab_df.csv',encoding='utf-8-sig', index_col=0)
+        # df_t = df_t[df_t['대리점'] == '상주대리점']
+        # df_t = df_t[df_t['잔량'] <= 30]
         df = df[df['대리점'] == '상주대리점']
         df_s = df[df['잔량'] <= 30]
         df_u = df[df['잔량'] > 30]
         df_pc = [len(df_s.index), len(df_u.index)]
         df_p = len(df_s.index)/len(df.index) * 100
-        st.dataframe(df_s, width=1069, height=808)
+        st._legacy_table(df_s)
         fig1 = px.pie(df_pc)
         st.plotly_chart(fig1)
     
@@ -130,7 +159,7 @@ def main() :
         df_u = df[df['잔량'] > 30]
         df_pc = [len(df_s.index), len(df_u.index)]
         df_p = len(df_s.index)/len(df.index) * 100
-        st.dataframe(df_s, width=1050, height=808)
+        st._legacy_table(df_s)
         fig1 = px.pie(df_pc)
         st.plotly_chart(fig1)
     
@@ -141,7 +170,7 @@ def main() :
         df_u = df[df['잔량'] > 30]
         df_pc = [len(df_s.index), len(df_u.index)]
         df_p = len(df_s.index)/len(df.index) * 100
-        st.dataframe(df_s, width=950, height=808)
+        st._legacy_table(df_s)
         fig1 = px.pie(df_pc)
         st.plotly_chart(fig1)
     
@@ -152,7 +181,8 @@ def main() :
         df_u = df[df['잔량'] > 30]
         df_pc = [len(df_s.index), len(df_u.index)]
         df_p = len(df_s.index)/len(df.index) * 100
-        st.dataframe(df_s, width=1000, height=808)
+        
+        st._legacy_table(df_s)
         fig1 = px.pie(df_pc)
         st.plotly_chart(fig1)
 
