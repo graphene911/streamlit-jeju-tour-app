@@ -99,7 +99,7 @@ def main() :
     df = df[['company_name_y', 'f_company_name', 'silo_name', '규격', 'food_name', 'per', 'expect_day', 'avg_per']]
     # df = df.groupby(['company_name_y','f_company_name'],  as_index=False)
     # 'per' : '잔량', 'expect_day' : '예상소진일',
-    df = df.rename(columns={'company_name_y':'대리점', 'f_company_name' : '농장명','avg_per' : '평균잔량', 'food_name' : '사료명칭',
+    df = df.rename(columns={'company_name_y':'대리점', '규격':'사일로 종류 및 톤수' ,'f_company_name' : '농장명','avg_per' : '평균잔량', 'food_name' : '사료명칭',
                             'per' : '잔량', 'expect_day' : '예상소진일','silo_name' : '사일로명'})
 
     # df['잔량(예상소진일)'] = df['잔량'] + '' + "%" + '' + df['예상소진일']
