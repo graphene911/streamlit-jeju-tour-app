@@ -41,6 +41,7 @@ def main() :
     for i in range(1, len(df_a.index)) :
         if df_a.loc[i,'farm'] != [] :
             df_farm_temp = pd.DataFrame(df_a.loc[i,'farm'])
+            
             df_farm = pd.concat([df_farm, df_farm_temp])
 
     df_farm = df_farm.reset_index(drop=True)
