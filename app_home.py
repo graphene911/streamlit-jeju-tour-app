@@ -10,7 +10,7 @@ def run_home() :
 
     df = pd.DataFrame.from_dict(response)
     
-    st.title('Error Device (Sunjin)')
+    st.title('Error Device (선진)')
     st.subheader('(Count :' + ' ' + str(df['sn'].count()) + ')')
 
     st.image('data/#fc6858_line.png', width = 1753)
