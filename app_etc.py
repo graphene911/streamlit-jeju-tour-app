@@ -13,7 +13,6 @@ def run_etc() :
     
     st.title('Error Device (선진제외전체)')
     st.subheader('(Count :' + ' ' + str(df['sn'].count()) + ')')
-
     st.image('data/#fc6858_line.png', width = 1753)
     
     st._legacy_table(df)
