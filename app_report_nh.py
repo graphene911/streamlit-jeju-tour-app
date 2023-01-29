@@ -17,12 +17,11 @@ def run_report_nh() :
 
     response = requests.get('http://topping.io:8000/API/silos/user/dashboard?user_seq=28').json()
 
-    df_u = pd.DataFrame(response)
-
-    df_u = df_u.T
-    df_uc = df_u['company_name']
-    df_uc = df_uc
-    df_silo = df_u['silo']
-    st._legacy_table(df_silo)
+    df = pd.DataFrame(response)
+    df = df.drop(columns=['agency_cnt','silo_cnt','farm_cnt','required_per_cnt','chart_cnt','chart_per'], axis=1)
+    df = df.T
+    df_c = df[['seq','company_name']]
+    df_silo = df['silo']
+    st._legacy_table(df_c)
 
 
