@@ -16,4 +16,5 @@ def run_home() :
     st.image('data/#fc6858_line.png', width = 1753)
     
     st._legacy_table(df)
+    # st._legacy_table(df.sort_values(['RecordTime'], ascending= False, ))
 
