@@ -8,19 +8,9 @@ import plotly.express as px
 
 def run_report() :
     
-    
-    # with open( "data/style.css" ) as css:
-    #     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
-    
-    
     st.title('선진사료 모니터링 보고서')
 
     response = requests.get('http://topping.io:8000/API/silos/user/dashboard?user_seq=30').json()
-
-    # st.write(response)
-    # data = response.json()
-
-    # # data = st.json(response)
 
     df = pd.DataFrame.from_dict(response)
 
@@ -33,6 +23,7 @@ def run_report() :
     df_am = pd.merge(df, df_a, left_on = 'seq', right_on = 'company_seq', how = 'left')
     df_ams = df_am[['company_name_x', 'company_name_y', 'company_seq_y', 'farm','seq_y']]
     df_farm = pd.DataFrame(df_a.loc[0,'farm'])
+    
     for i in range(1, len(df_a.index)) :
         if df_a.loc[i,'farm'] != [] :
             df_farm_temp = pd.DataFrame(df_a.loc[i,'farm'])
