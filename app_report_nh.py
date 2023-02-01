@@ -21,7 +21,11 @@ def run_report_nh() :
     df = df.drop(columns=['agency_cnt','silo_cnt','farm_cnt','required_per_cnt','chart_cnt','chart_per'], axis=1)
     df = df.T
     df_c = df[['seq','company_name']]
-    df_silo = df['silo']
-    st._legacy_table(df_c)
+    df_silos = df['silo']
+    df_silo = pd.DataFrame(df.loc[0,'silo'])
+
+    for i in range(1, len(df.index)) :
+        df_silo_temp = pd.DataFrame(df.loc[i,'silo'])
+        df_silo = pd.concat([df_silo, df_silo_temp])
 
 

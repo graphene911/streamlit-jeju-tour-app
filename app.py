@@ -8,7 +8,7 @@ def main() :
     
     st.set_page_config(layout="wide")
 
-    menu = ['Error Device(선진)', 'Error Device(선진제외전체)' ,'Myfeed Report(선진)' ]
+    menu = ['Error Device(선진)', 'Error Device(선진제외전체)' ,'Myfeed Report(선진)','Myfeed Report(서울축산농협)' ]
     choice = st.sidebar.selectbox('메뉴 선택', menu)
     
     if choice == menu[0] :
@@ -17,6 +17,8 @@ def main() :
         run_etc()
     elif choice == menu[2] :
         run_report()
+    elif choice == menu[3] :
+        run_report_nh()
 
 
 if __name__ == '__main__' :
