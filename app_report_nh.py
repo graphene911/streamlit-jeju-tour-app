@@ -22,19 +22,23 @@ def run_report_nh() :
         df_silo = pd.DataFrame(i)
     df_silo_m = df_silo.drop(columns=['silo_height', 'silo_diameter', 'memo', 'food_category', 'silo_capacity',
                                     'silo_middle_height', 'silo_middle_diameter','seq','binstatus', 'charge_per'])
+
+    df_sd = pd.DataFrame(df_silo['silodata'])
+    for i in range(0, df_sd['silodata']) :
+        df_sd_c = pd.DataFrame(df_silo.loc[i,'silodata'])
+        df_sd = pd.merge(df_silo_m, df_sd_c, left_on = 'silo_type', right_on = 'type',how='left')
+    # df_sd = pd.DataFrame(df_silo.loc[0,'silodata'])
     
-    df_user = pd.merge(df_c, df_silo_m, left_on = 'seq', right_on = 'farm_id',how='left')
-    # df_user = df_user.drop(columns=['gender','user_email','auth','date_of_birth','is_activate','user_password','logo','last_name','lat',
-    #                                 'animal_type','lon','first_name','animal_cnt','api_key','user_id','status','address','token','cdt',
-    #                                 'company_seq','coordinate','phone','agency_seq','short','normal','large','farm_id','silo_sn',
-    #                                 ],axis=1)
+    # for i in range(0, len(df_silo_m.index)) :
+    #     df_silo_temp = pd.DataFrame(df_silo_m.loc[i,'silo'])
+    #     df_silo = pd.concat([df_c, df_silo_temp])
+
+    
     # df_sd = df_silo_m['silodata']
-    # for i in range(1, len(df_sd.index)) :
-    #     if df_sd.loc[i,'silodata'] != [] :
-    #         df_farm_temp = pd.DataFrame.from_dict([df_sd['silodata']])
-    #         df_farm = pd.concat([df_silo_m, df_farm_temp])
-    df_sd = df_silo_m['silodata']
-    df_sd = df_sd.T
-    st._legacy_table(df_sd)
+
+    # df_user = pd.merge(df_c, df_silo_m, left_on = 'seq', right_on = 'farm_id',how='left')
+
+    
+    st._legacy_table(df_sd_c)
 
 
