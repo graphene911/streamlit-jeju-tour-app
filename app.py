@@ -9,7 +9,7 @@ def main() :
     st.set_page_config(layout="wide")
 
     menu = ['Error Device(선진)', 'Error Device(선진제외전체)' ,'Myfeed Report(선진)', 'Myfeed Report(서울축산농협)' ]
-    choice = st.selectbox('메뉴 선택', menu)
+    choice = st.sidebar.selectbox('메뉴 선택', menu)
     
     if choice == menu[0] :
         run_home()
