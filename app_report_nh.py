@@ -13,7 +13,7 @@ def run_report_nh() :
     st.info('실시간 사료 소비량 모니터링과 AI 분석을 통해사료 소진일을 예측합니다.')
     st.subheader('')
     st.image('data/#fc6858_line.png', width = 1753)
-    st.subheader('사료소진 임박 사일로 리스트')
+    
 
     response = requests.get('http://topping.io:8000/API/silos/user/dashboard?user_seq=28').json()
 
@@ -43,6 +43,8 @@ def run_report_nh() :
     df = df.reset_index()
     df = df.drop(columns='index')
     df = df[df['잔량'] <= 30]
+
+    st.subheader('사료소진 임박 사일로 리스트')
     st._legacy_table(df)
 
 
