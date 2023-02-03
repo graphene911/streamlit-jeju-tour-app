@@ -27,7 +27,7 @@ def run_home() :
         st.subheader('(Count :' + ' ' + str(df['시리얼넘버'].count()) + ')')
         
         with open("data/aimbelab_df_error_device.csv", "rb") as file:
-            st.download_button(
+            btn = st.download_button(
                 label="Download CSV File",
                 data=file,
                 file_name="Error Device.csv",
