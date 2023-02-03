@@ -58,5 +58,5 @@ def run_home() :
         df = df[df['대리점'] == '영동대리점']
         df = df.reset_index()
         df = df.drop(columns='index')
-        # st.subheader('(Count :' + ' ' + str(df['시리얼넘버'].count()) + ')')
+        st.subheader('(Count :' + ' ' + str(df['시리얼넘버'].count()) + ')')
         st._legacy_table(df)
