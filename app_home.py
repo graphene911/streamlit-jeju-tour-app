@@ -32,7 +32,7 @@ def run_home() :
                 data=file,
                 file_name="Error Device.csv",
                 mime="application/octet-stream")
-
+        
         st._legacy_table(df)
         
         
