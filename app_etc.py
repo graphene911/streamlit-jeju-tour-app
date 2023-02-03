@@ -24,3 +24,4 @@ def run_etc() :
     st.subheader('(Count :' + ' ' + str(df['농장명'].count()) + ')')
     st._legacy_table(df)
 
+    

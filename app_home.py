@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import requests
+from starlette.responses import FileResponse
 
 
 def run_home() :
@@ -24,7 +25,16 @@ def run_home() :
                             'silo':'사일로명','sn':'시리얼넘버','RecordTime':'마지막 측정시간'})
     if choice == menu[0] :
         st.subheader('(Count :' + ' ' + str(df['시리얼넘버'].count()) + ')')
+        
+        with open("data/aimbelab_df_error_device.csv", "rb") as file:
+            st.download_button(
+                label="Download CSV File",
+                data=file,
+                file_name="Error Device.csv",
+                mime="application/octet-stream")
+
         st._legacy_table(df)
+        
         
     elif choice == menu[1] :
         df = df[df['대리점'] == '여주축우대리점']
