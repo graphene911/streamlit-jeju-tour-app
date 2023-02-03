@@ -41,7 +41,7 @@ def run_report_nh() :
     df = df[['사일로명','사일로 종류 및 톤수','사료명칭','잔량','예상소진일']]
     df = df.reset_index()
     df = df.drop(columns='index')
-
+    df = df[df['잔량'] <= 30]
     st._legacy_table(df)
 
 
