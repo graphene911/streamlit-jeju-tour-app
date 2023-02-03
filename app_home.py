@@ -11,10 +11,52 @@ def run_home() :
     df = pd.DataFrame.from_dict(response)
     
     st.title('Error Device (선진)')
-    st.subheader('(Count :' + ' ' + str(df['sn'].count()) + ')')
-
-    st.image('data/#fc6858_line.png', width = 1753)
     
-    st._legacy_table(df)
-    # st._legacy_table(df.sort_values(['RecordTime'], ascending= False, ))
+    menu = ['전체','여주축우대리점','상주대리점', '영주북부대리점', '예산대리점', '영동대리점']
+    choice = st. selectbox('대리점 선택', menu)
+    st.image('data/#fc6858_line.png', width = 1753)
+    df.to_csv('data/aimbelab_df_error_device.csv', encoding='utf-8-sig')
+    
+    df = pd.read_csv('data/aimbelab_df_error_device.csv',encoding='utf-8-sig', index_col=0)
+    # st._legacy_table(df)
+    # # st._legacy_table(df.sort_values(['RecordTime'], ascending= False, ))
+    df = df.rename(columns={'agency':'대리점','farm':'농장명','address':'주소','silo_seq':'사일로 seq',
+                            'silo':'사일로명','sn':'시리얼넘버','RecordTime':'마지막 측정시간'})
+    if choice == menu[0] :
+        st.subheader('(Count :' + ' ' + str(df['시리얼넘버'].count()) + ')')
+        st._legacy_table(df)
+        
+    elif choice == menu[1] :
+        df = df[df['대리점'] == '여주축우대리점']
+        df = df.reset_index()
+        df = df.drop(columns='index')
+        st.subheader('(Count :' + ' ' + str(df['시리얼넘버'].count()) + ')')
+        st._legacy_table(df)
 
+    elif choice == menu[2] :
+        df = df[df['대리점'] == '상주대리점']
+        df = df.reset_index()
+        df = df.drop(columns='index')
+        st.subheader('(Count :' + ' ' + str(df['시리얼넘버'].count()) + ')')
+        st._legacy_table(df)
+
+    elif choice == menu[3] :
+        df = df[df['대리점'] == '영주북부대리점']
+        df = df.reset_index()
+        df = df.drop(columns='index')
+        st.subheader('(Count :' + ' ' + str(df['시리얼넘버'].count()) + ')')
+        st._legacy_table(df)
+
+    elif choice == menu[4] :
+        df = df[df['대리점'] == '예산대리점']
+        df = df.reset_index()
+        df = df.drop(columns='index')
+        st.subheader('(Count :' + ' ' + str(df['시리얼넘버'].count()) + ')')
+        st._legacy_table(df)
+
+    elif choice == menu[5] :
+        df = df[df['대리점'] == '영동대리점']
+        df = df.reset_index()
+        df = df.drop(columns='index')
+        # st.subheader('(Count :' + ' ' + str(df['시리얼넘버'].count()) + ')')
+        st._legacy_table(df)

@@ -4,10 +4,15 @@ import numpy as np
 import pandas as pd
 import requests
 import plotly.express as px
+import json
 
 
 def run_report_nh() :
     st.title('서울축산농협 모니터링 보고서')
+    
+    st.info('실시간 사료 소비량 모니터링과 AI 분석을 통해사료 소진일을 예측합니다.')
+    st.subheader('')
+    st.image('data/#fc6858_line.png', width = 1753)
 
     response = requests.get('http://topping.io:8000/API/silos/user/dashboard?user_seq=28').json()
 
@@ -20,25 +25,23 @@ def run_report_nh() :
     df_silos = df_silos.reset_index(drop=True)
     for i in df_silos:
         df_silo = pd.DataFrame(i)
-    df_silo_m = df_silo.drop(columns=['silo_height', 'silo_diameter', 'memo', 'food_category', 'silo_capacity',
-                                    'silo_middle_height', 'silo_middle_diameter','seq','binstatus', 'charge_per'])
+    df_silo_m = df_silo.drop(columns=['silo_sn','silo_height', 'silo_diameter', 'memo', 'food_category', 'silo_capacity', 'farm_id',
+                                    'silo_middle_height','silodata' ,'silo_middle_diameter','seq','binstatus', 'charge_per'])
+    df_silo_m['silo_type'] = df_silo_m['silo_type'].astype('int64')
+    df_sd = df_silo['silodata']
+    df_sd= df_sd.to_list()
+    df_sd = pd.DataFrame(df_sd)
+    # df_sd['silo_type'] = df_sd['silo_type'].astype('int64')
 
-    df_sd = pd.DataFrame(df_silo['silodata'])
-    for i in range(0, df_sd['silodata']) :
-        df_sd_c = pd.DataFrame(df_silo.loc[i,'silodata'])
-        df_sd = pd.merge(df_silo_m, df_sd_c, left_on = 'silo_type', right_on = 'type',how='left')
-    # df_sd = pd.DataFrame(df_silo.loc[0,'silodata'])
-    
-    # for i in range(0, len(df_silo_m.index)) :
-    #     df_silo_temp = pd.DataFrame(df_silo_m.loc[i,'silo'])
-    #     df_silo = pd.concat([df_c, df_silo_temp])
+    df_silo = pd.merge(df_silo_m,df_sd, left_on='silo_type', right_on='seq', how='left')
+    df_silo = df_silo.drop(columns=['silo_type', 'seq','h1','h2','h3','h4','display','d','siloType'])
+    df = df_silo.drop_duplicates()
+    df['사일로 종류 및 톤수'] = df['companyName'] + " " + df['size'] + "t"
+    df = df.rename(columns={'silo_name':'사일로명','food_name':'사료명칭','per':'잔량','expect_day':'예상소진일'})
+    df = df[['사일로명','사일로 종류 및 톤수','사료명칭','잔량','예상소진일']]
+    df = df.reset_index()
+    df = df.drop(columns='index')
 
-    
-    # df_sd = df_silo_m['silodata']
-
-    # df_user = pd.merge(df_c, df_silo_m, left_on = 'seq', right_on = 'farm_id',how='left')
-
-    
-    st._legacy_table(df_sd_c)
+    st._legacy_table(df)
 
 
