@@ -14,7 +14,7 @@ def run_home() :
                             'silo':'사일로명','sn':'시리얼넘버','RecordTime':'마지막 측정시간'})
     st.title('Error Device (선진)')
     
-    menu = ['전체','여주축우대리점','상주대리점', '영주북부대리점', '예산대리점', '영동대리점']
+    menu = ['전체','여주축우대리점','상주대리점', '영주북부대리점', '예산대리점', '영동대리점', '선진한마을']
     choice = st. selectbox('대리점 선택', menu)
     st.image('data/#fc6858_line.png', width = 1753)
     df.to_csv('data/aimbelab_df_error_device.csv', encoding='utf-8-sig')
@@ -66,6 +66,13 @@ def run_home() :
 
     elif choice == menu[5] :
         df = df[df['대리점'] == '영동대리점']
+        df = df.reset_index()
+        df = df.drop(columns='index')
+        st.subheader('(Count :' + ' ' + str(df['시리얼넘버'].count()) + ')')
+        st._legacy_table(df)
+
+    elif choice == menu[6] :
+        df = df[df['대리점'] == '선진한마을']
         df = df.reset_index()
         df = df.drop(columns='index')
         st.subheader('(Count :' + ' ' + str(df['시리얼넘버'].count()) + ')')
