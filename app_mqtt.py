@@ -14,6 +14,7 @@ def run_mqtt() :
     soup = BeautifulSoup(response.text, 'html.parser')
     # html_code = soup.prettify()
     program_names = soup.select('td > p > a')
+    
     for tag in program_names:
 	    print(tag.get_text())
         # print(tag_text)
