@@ -5,7 +5,7 @@ import requests
 
 def run_etc() :
     
-    url = 'http://topping.io:8000/API/silos/error_silo?user_seq=8'
+    url = 'http://20.214.200.233:8000/API/silos/error_silo?user_seq=8'
 
     response = requests.get(url).json()
 

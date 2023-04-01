@@ -10,7 +10,7 @@ def run_report() :
     
     st.title('선진사료 모니터링 보고서')
 
-    response = requests.get('http://topping.io:8000/API/silos/user/dashboard?user_seq=30').json()
+    response = requests.get('http://20.214.200.233:8000/API/silos/user/dashboard?user_seq=30').json()
 
     df = pd.DataFrame.from_dict(response)
 

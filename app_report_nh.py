@@ -15,7 +15,7 @@ def run_report_nh() :
     st.image('data/#fc6858_line.png', width = 1753)
     
 
-    response = requests.get('http://topping.io:8000/API/silos/user/dashboard?user_seq=28').json()
+    response = requests.get('http://20.214.200.233:8000/API/silos/user/dashboard?user_seq=28').json()
 
     df = pd.DataFrame(response)
     df = df.drop(columns=['agency_cnt','silo_cnt','farm_cnt','required_per_cnt','chart_cnt','chart_per'], axis=1)
