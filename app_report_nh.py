@@ -18,7 +18,7 @@ def run_report_nh() :
     response = requests.get('http://20.214.200.233:8000/API/silos/user/dashboard?user_seq=28').json()
 
     df = pd.DataFrame(response)
-    df = df.drop(columns=['agency_cnt','silo_cnt','farm_cnt','required_per_cnt','chart_cnt','chart_per'], axis=1)
+    df = df.drop(columns=['silo_cnt','required_per_cnt','chart_cnt','chart_per'], axis=1)
     df = df.T
     df_c = df[['seq','company_name']]
     df_c = df_c.reset_index(drop=True)
