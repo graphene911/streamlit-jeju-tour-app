@@ -1,29 +1,22 @@
 import streamlit as st
-import plotly.express as px
-import numpy as np
 import pandas as pd
 import requests
-import plotly.express as px
-import json
-from bs4 import BeautifulSoup
 
 
-def run_mqtt() :
-    url = 'https://www.aimbelab.com/mqtt.php'
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    # html_code = soup.prettify()
-    program_names = soup.select('td > p > a')
+# run_mqtt 함수 정의
+def run_mqtt(silo_sn, start_date, end_date):
     
-    for tag in program_names:
-	    print(tag.get_text())
-        # print(tag_text)
-    # print(html_code)
-    # articles = soup.find_all('div', {'class': 'cluster_text'})
+    url = 'http://20.214.200.233:8000/API/silos/get_silo_list2?silo_sn={}&start_date={}&end_date={}'.format(silo_sn, start_date, end_date)
+    response = requests.get(url)
+    response_json = response.json() # JSON으로 변환
+    df = pd.DataFrame(response_json)
+    df.to_csv('data/DATA_LIST.csv', encoding='utf-8-sig')
+    with open("data/DATA_LIST.csv", "rb") as file:
+        st.download_button(
+                    label="Download CSV File",
+                    data=file,
+                    file_name="DATA_LIST.csv",
+                    mime="application/octet-stream")
+    st._legacy_table(df)
 
-    # for article in articles:
-    #     title = article.find('SN').get_text().strip()
-    #     link = article.find('SN')['href']
-    #     print(title)
-    #     print(link)
-    # return tag_text
+
