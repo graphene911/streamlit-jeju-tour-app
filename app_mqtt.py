@@ -17,6 +17,7 @@ def run_mqtt(silo_sn, start_date, end_date):
                     data=file,
                     file_name="DATA_LIST.csv",
                     mime="application/octet-stream")
+    df = df.sort_values(by='RecordTime', ascending=False)
     st._legacy_table(df)
 
 
