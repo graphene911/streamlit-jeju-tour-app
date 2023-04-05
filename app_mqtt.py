@@ -6,6 +6,7 @@ import requests
 # run_mqtt 함수 정의
 def run_mqtt(silo_sn, start_date, end_date):
     
+    
     url = 'http://20.214.200.233:8000/API/silos/get_silo_list2?silo_sn={}&start_date={}&end_date={}'.format(silo_sn, start_date, end_date)
     response = requests.get(url)
     response_json = response.json() # JSON으로 변환
