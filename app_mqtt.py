@@ -25,5 +25,6 @@ def run_mqtt(silo_sn, start_date, end_date):
     df = pd.read_csv('data/DATA_LIST.csv',encoding='utf-8-sig', index_col=0)
     
     st._legacy_table(df)
+    print(df.columns)
 
 
