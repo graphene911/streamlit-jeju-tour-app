@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import requests
+import altair as alt
 
 
 
@@ -26,6 +27,32 @@ def run_mqtt(silo_sn, start_date, end_date):
     df = pd.read_csv('data/DATA_LIST.csv',encoding='utf-8-sig', index_col=0)
     
     st._legacy_table(df)
-    print(df.columns)
+    df = df[['RecordTime', 'ton', 'Dist']] # 필요한 열만 선택
+    # print(df.dtypes)
+    df['ton'] = pd.to_numeric(df['ton'], errors='coerce')
+    df.set_index('RecordTime', inplace=True)
 
+    # altair line chart 생성
+    ton_chart = alt.Chart(df).mark_line().encode(
+        x=alt.X('RecordTime', axis=alt.Axis(title='Record Time')),
+        y=alt.Y('ton', axis=alt.Axis(title='Ton'))
+    ).properties(
+        width=800,
+        height=400
+    )
 
+    dist_chart = alt.Chart(df).mark_line().encode(
+        x=alt.X('RecordTime', axis=alt.Axis(title='Record Time')),
+        y=alt.Y('Dist', axis=alt.Axis(title='Distance'))
+    ).properties(
+        width=800,
+        height=400
+    )
+    
+    # y 축 범위 설정
+    chart = ton_chart.configure_scale(
+        y=alt.Scale(domain=(float(df['ton'].min()), float(df['ton'].max())))
+    ) & dist_chart.configure_scale(
+        y=alt.Scale(domain=(float(df['Dist'].min()), float(df['Dist'].max())))
+    )
+    st.altair_chart(chart, use_container_width=True)
